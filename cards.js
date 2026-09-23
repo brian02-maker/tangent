@@ -1,0 +1,108 @@
+/* Tangent card library.
+   Add cards by copying one of the shapes below. Every id must be unique.
+   s = subject: science | economics | cars | investing | crypto | space | history | psychology
+   t = card type:
+     fact  -> {hook, body}
+     quiz  -> {hook, options:[...2-4], answer: index of right option (0 = first), body}
+     myth  -> {hook (a claim), isTrue: true|false, body}
+     guess -> {hook, min, max, step, answer, unit, pre:'£' (optional prefix), body}
+*/
+window.TANGENT_CARDS = [
+ // Science
+ {id:'sc1',s:'science',t:'fact',hook:"You're roughly half bacteria.",body:"A 2016 estimate put it at about 38 trillion bacteria to 30 trillion human cells. The old '10 to 1' figure you might have heard was never properly measured."},
+ {id:'sc2',s:'science',t:'guess',hook:"How many times could light circle the Earth in one second?",min:0,max:20,step:0.5,answer:7.5,unit:'times',body:"About 7.5. Light covers roughly 300,000 km a second, and the Earth's circumference is about 40,000 km."},
+ {id:'sc3',s:'science',t:'myth',hook:"Lightning never strikes the same place twice.",isTrue:false,body:"Tall things get hit again and again. The Empire State Building takes around 20–25 strikes a year."},
+ {id:'sc4',s:'science',t:'quiz',hook:"Roughly how much of an adult's body weight is water?",options:['About 30%','About 60%','About 90%'],answer:1,body:"Around 60% for most adults. It's why a few percent loss through sweating is enough to hit your performance."},
+ {id:'sc5',s:'science',t:'fact',hook:"Bananas are slightly radioactive.",body:"They're full of potassium, and a tiny fraction of natural potassium is radioactive potassium-40. Your own body carries it too — it's harmless at everyday levels."},
+ // Economics
+ {id:'ec1',s:'economics',t:'fact',hook:"The real price of anything is what you gave up to get it.",body:"That's opportunity cost. An evening editing videos costs you the evening you'd have spent doing anything else — money is only part of the bill."},
+ {id:'ec2',s:'economics',t:'quiz',hook:"What inflation rate is the Bank of England told to aim for?",options:['0%','2%','5%'],answer:1,body:"2%. A little inflation nudges people to spend and invest rather than hoard cash; zero risks sliding into falling prices, which can freeze an economy."},
+ {id:'ec3',s:'economics',t:'myth',hook:"Printing more money makes everyone richer.",isTrue:false,body:"If the amount of stuff to buy doesn't grow, more money just chases the same goods — prices rise and each pound buys less."},
+ {id:'ec4',s:'economics',t:'guess',hook:"Zimbabwe's biggest banknote in 2009 was worth how many trillion dollars?",min:1,max:500,step:1,answer:100,unit:'trillion',body:"100 trillion Zimbabwe dollars — and it still wasn't enough to buy much. Hyperinflation had made the currency close to worthless."},
+ {id:'ec5',s:'economics',t:'fact',hook:"A Big Mac can tell you if a currency is overvalued.",body:"The Economist's Big Mac Index compares burger prices around the world. If it's much pricier in one country after converting, that currency may be overvalued."},
+ // Cars
+ {id:'ca1',s:'cars',t:'fact',hook:"A turbo is powered by your car's own exhaust.",body:"Exhaust gas spins a turbine, which spins a compressor that forces extra air into the engine. More air means more fuel can burn — more power from a smaller engine."},
+ {id:'ca2',s:'cars',t:'quiz',hook:"What does ABS actually stop?",options:['Wheels locking under hard braking','The car sliding sideways on ice','The engine stalling'],answer:0,body:"Anti-lock brakes pulse many times a second so the wheels keep turning — which means you can still steer while stopping hard."},
+ {id:'ca3',s:'cars',t:'myth',hook:"You should idle your engine for 10 minutes before driving.",isTrue:false,body:"Modern fuel-injected engines warm up fastest by being driven gently. Idling for ages just wastes fuel."},
+ {id:'ca4',s:'cars',t:'guess',hook:"In 2019 a Bugatti Chiron became the first car past 300 mph. What did it hit?",min:150,max:350,step:1,answer:305,unit:'mph',body:"304.77 mph, at Volkswagen's Ehra-Lessien test track in Germany."},
+ {id:'ca5',s:'cars',t:'fact',hook:"An F1 car could, in theory, drive upside down.",body:"At high speed its wings and floor push down with more force than the car weighs. Stick it on a tunnel ceiling fast enough and physics says it would hold."},
+ {id:'ca6',s:'cars',t:'fact',hook:"EVs feel punchy because electric motors give full torque from 0 rpm.",body:"A petrol engine has to rev up to reach its peak pulling power. An electric motor has it the instant you press the pedal."},
+ // Investing
+ {id:'in1',s:'investing',t:'guess',hook:"£1,000 invested at 7% a year, left alone for 30 years. Roughly what's it worth?",min:1000,max:15000,step:100,answer:7600,pre:'£',body:"About £7,600. That's compounding — growth earning growth. Most of it arrives in the final decade, which is why starting early matters so much."},
+ {id:'in2',s:'investing',t:'fact',hook:"Most professional fund managers lose to a simple index fund.",body:"S&P's SPIVA reports regularly find around 9 in 10 US large-cap fund managers trail the S&P 500 over 15 years — fees eat a lot of the difference."},
+ {id:'in3',s:'investing',t:'myth',hook:"You pay tax on profits made inside a Stocks & Shares ISA.",isTrue:false,body:"Gains and dividends inside an ISA are free of UK income tax and capital gains tax. You can take money out without declaring it."},
+ {id:'in4',s:'investing',t:'myth',hook:"You need thousands to start investing.",isTrue:false,body:"Many UK platforms let you start with a few pounds a month in a fund or fractional shares. Time in the market matters more than the starting amount."},
+ {id:'in5',s:'investing',t:'fact',hook:"Investing the same amount every month means you buy more when prices drop.",body:"It's called pound-cost averaging. £100 buys more shares in a dip and fewer at a peak, smoothing out your average price without any timing."},
+ // Crypto
+ {id:'cr1',s:'crypto',t:'fact',hook:"There will only ever be 21 million bitcoin.",body:"The cap is written into Bitcoin's code. New coins are released as a reward for mining, and that reward halves roughly every four years."},
+ {id:'cr2',s:'crypto',t:'quiz',hook:"What does a crypto wallet actually hold?",options:['Your coins','Your private keys','Your bank details'],answer:1,body:"The coins live on the blockchain. Your wallet holds the keys that prove you can spend them — lose the keys and the coins are gone for good."},
+ {id:'cr3',s:'crypto',t:'myth',hook:"Bitcoin transactions are completely anonymous.",isTrue:false,body:"Every transaction sits on a public ledger forever. Addresses aren't names, but analysts link them to people all the time — it's pseudonymous, not anonymous."},
+ {id:'cr4',s:'crypto',t:'fact',hook:"Someone once paid 10,000 bitcoin for two pizzas.",body:"May 22, 2010 — the first well-known purchase with bitcoin. It's now celebrated every year as Bitcoin Pizza Day."},
+ {id:'cr5',s:'crypto',t:'guess',hook:"Roughly how often is a new Bitcoin block added, in minutes?",min:1,max:60,step:1,answer:10,unit:'min',body:"About every 10 minutes. The network automatically adjusts how hard mining is to keep it near that pace."},
+ // Space
+ {id:'sp1',s:'space',t:'fact',hook:"A day on Venus is longer than its year.",body:"Venus takes about 243 Earth days to spin once, but only about 225 to orbit the Sun. It also spins backwards compared with most planets."},
+ {id:'sp2',s:'space',t:'guess',hook:"How many minutes does sunlight take to reach Earth?",min:0,max:30,step:0.1,answer:8.3,unit:'min',body:"About 8 minutes 20 seconds. If the Sun vanished, you wouldn't know for that long."},
+ {id:'sp3',s:'space',t:'myth',hook:"Astronauts float because there's no gravity on the ISS.",isTrue:false,body:"Gravity up there is about 90% as strong as on the ground. They float because they're in constant freefall around the Earth."},
+ {id:'sp4',s:'space',t:'quiz',hook:"A light-year measures…",options:['Time','Distance','Brightness'],answer:1,body:"Distance — how far light travels in a year, roughly 9.5 trillion km."},
+ {id:'sp5',s:'space',t:'fact',hook:"The Apollo footprints could last millions of years.",body:"The Moon has no wind or rain to wear them away. Tiny meteorite impacts are about the only thing slowly erasing them."},
+ // History
+ {id:'hi1',s:'history',t:'fact',hook:"Cleopatra lived closer to the Moon landing than to the building of the Great Pyramid.",body:"The Great Pyramid went up around 2560 BC. Cleopatra died in 30 BC — about 2,500 years later, and around 2,000 years before Apollo 11."},
+ {id:'hi2',s:'history',t:'guess',hook:"How many years did the Hundred Years' War actually last?",min:50,max:200,step:1,answer:116,unit:'years',body:"116 years, from 1337 to 1453 — on and off, with long truces in between."},
+ {id:'hi3',s:'history',t:'myth',hook:"Vikings wore horned helmets.",isTrue:false,body:"No real Viking-age helmet with horns has been found. The look took off with costumes for Wagner's operas in the 1870s."},
+ {id:'hi4',s:'history',t:'quiz',hook:"Which came first?",options:['Teaching at Oxford University','The Aztec capital, Tenochtitlan'],answer:0,body:"Teaching at Oxford dates back to at least 1096. Tenochtitlan wasn't founded until 1325."},
+ {id:'hi5',s:'history',t:'fact',hook:"The shortest war in history lasted under an hour.",body:"Britain vs Zanzibar, 27 August 1896. Estimates put it at roughly 38 to 45 minutes before Zanzibar surrendered."},
+ // Psychology
+ {id:'ps1',s:'psychology',t:'fact',hook:"Without review, you forget most of what you learn within days.",body:"Hermann Ebbinghaus mapped the 'forgetting curve' in the 1880s. The fix is spaced repetition — which is why questions you miss come back later in this feed."},
+ {id:'ps2',s:'psychology',t:'fact',hook:"Losing £50 hurts about twice as much as winning £50 feels good.",body:"Loss aversion, from Kahneman and Tversky's research. It's why people hold losing investments too long and chase losses when betting."},
+ {id:'ps3',s:'psychology',t:'myth',hook:"We only use 10% of our brains.",isTrue:false,body:"Brain scans show activity across virtually the whole brain over a day. Even during sleep, large areas are busy."},
+ {id:'ps4',s:'psychology',t:'quiz',hook:"The Dunning–Kruger effect describes…",options:['Experts overthinking simple tasks','People with low skill overrating their ability','Memory fading under stress'],answer:1,body:"The less you know about something, the harder it is to spot what you're getting wrong — so confidence can outrun skill."},
+ {id:'ps5',s:'psychology',t:'fact',hook:"The first number you hear skews every guess after it.",body:"It's called anchoring. It's why the 'was £199' price makes £99 feel cheap, and why the opening offer in a negotiation matters so much."},
+ // ---- Science (more)
+ {id:'sc6',s:'science',t:'fact',hook:"Octopuses have three hearts and blue blood.",body:"Two hearts pump blood through the gills, one through the body. Their blood uses copper rather than iron to carry oxygen, which turns it blue."},
+ {id:'sc7',s:'science',t:'myth',hook:"Goldfish have a three-second memory.",isTrue:false,body:"Experiments show goldfish can remember things for months — they've been trained to push levers and respond to sounds at feeding time."},
+ {id:'sc8',s:'science',t:'quiz',hook:"What's the most common gas in the air you breathe?",options:['Oxygen','Nitrogen','Carbon dioxide'],answer:1,body:"Nitrogen, at about 78%. Oxygen is about 21%, and carbon dioxide is a tiny fraction of 1%."},
+ {id:'sc9',s:'science',t:'guess',hook:"At the top of Everest, water boils at roughly what temperature?",min:40,max:100,step:1,answer:70,unit:'°C',body:"Roughly 70°C. Lower air pressure means water boils sooner — which is why cooking pasta up a mountain takes ages."},
+ {id:'sc10',s:'science',t:'fact',hook:"Sound travels about four times faster in water than in air.",body:"Around 1,480 metres a second in water versus about 343 in air. Tightly packed molecules pass vibrations on quicker."},
+ // ---- Economics (more)
+ {id:'ec6',s:'economics',t:'quiz',hook:"What does GDP measure?",options:['The total value of what a country produces','How much tax a government collects','How much a country owes'],answer:0,body:"Gross domestic product adds up the value of goods and services made in an economy over a period. Two falling quarters in a row is the usual rough definition of a recession."},
+ {id:'ec7',s:'economics',t:'myth',hook:"A weaker pound is bad news for everyone in the UK.",isTrue:false,body:"It makes imports and holidays pricier, but UK exporters get cheaper for foreign buyers, and tourists visiting Britain get more for their money."},
+ {id:'ec8',s:'economics',t:'fact',hook:"At 3% inflation, cash loses half its buying power in about 23 years.",body:"Prices compound just like interest does. Money sitting in a 0% account quietly shrinks every year inflation is above zero."},
+ {id:'ec9',s:'economics',t:'guess',hook:"The Rule of 72: at 6% a year, how many years to double your money?",min:1,max:30,step:1,answer:12,unit:'years',body:"72 ÷ 6 = 12. Divide 72 by any growth rate for a quick doubling time — it works for inflation and debt too."},
+ {id:'ec10',s:'economics',t:'fact',hook:"£4.99 feels much cheaper than £5 because you read left to right.",body:"It's called the left-digit effect. Your brain anchors on the first digit, so a 1p difference can shift how many people buy."},
+ // ---- Cars (more)
+ {id:'ca7',s:'cars',t:'quiz',hook:"What did GTI originally stand for?",options:['Grand Touring International','Gran Turismo Injection','Gas Turbo Intake'],answer:1,body:"Gran Turismo Injection — the fuel injection was the big deal. The 1976 VW Golf GTI made the hot hatch famous."},
+ {id:'ca8',s:'cars',t:'myth',hook:"Premium fuel makes any car faster.",isTrue:false,body:"Higher-octane fuel only helps engines designed or tuned for it. In a standard engine you're mostly paying extra for the same performance."},
+ {id:'ca9',s:'cars',t:'guess',hook:"What year did the 70 mph limit first come in on UK roads?",min:1930,max:2000,step:1,answer:1965,unit:'',plain:true,body:"1965, as a trial after a run of serious crashes in fog. It was made permanent in 1967 and hasn't changed since."},
+ {id:'ca10',s:'cars',t:'fact',hook:"Diesel engines don't have spark plugs.",body:"They squeeze air so hard it gets hot enough to ignite fuel as soon as it's injected. It's called compression ignition."},
+ {id:'ca11',s:'cars',t:'fact',hook:"Each tyre touches the road over an area about the size of a postcard.",body:"Everything your car does — braking, steering, accelerating — happens through those four small patches. It's why tyre condition matters so much."},
+ // ---- Investing (more)
+ {id:'in6',s:'investing',t:'quiz',hook:"What is a dividend?",options:['A fee for holding a fund','Part of a company\'s profit paid to shareholders','The gap between buy and sell prices'],answer:1,body:"Companies can pay out some of their profit to shareholders, usually a few times a year. Reinvesting dividends is a big part of long-term returns."},
+ {id:'in7',s:'investing',t:'fact',hook:"The FTSE 100 is just the 100 biggest companies on the London Stock Exchange.",body:"They're ranked by market value — share price times number of shares. When the news says 'the FTSE fell', it's that basket moving."},
+ {id:'in8',s:'investing',t:'myth',hook:"A fund's past performance tells you what it'll do next.",isTrue:false,body:"Last year's star funds often end up average or worse. That's why every UK fund carries the warning that past performance isn't a reliable guide."},
+ {id:'in9',s:'investing',t:'guess',hook:"£10,000 grows 6% a year for 30 years. How much more is left with 0.2% fees instead of 1%?",min:0,max:30000,step:500,answer:11000,pre:'£',body:"Roughly £11,000 more. A fee that sounds tiny comes out of your balance every single year, and compounding works against you."},
+ {id:'in10',s:'investing',t:'fact',hook:"An ETF is a fund you can buy and sell like a single share.",body:"Exchange-traded funds usually track an index, trade throughout the day, and often have very low fees — a popular way to start investing."},
+ // ---- Crypto (more)
+ {id:'cr6',s:'crypto',t:'quiz',hook:"What's a stablecoin?",options:['A coin that never changes in price by law','A crypto token designed to track a currency like the US dollar','Bitcoin held for over a year'],answer:1,body:"Stablecoins aim to hold a steady value, usually one dollar, backed by reserves. How safe they are depends on what those reserves really are."},
+ {id:'cr7',s:'crypto',t:'fact',hook:"Ethereum cut its energy use by over 99% in one day.",body:"In September 2022, 'the Merge' swapped energy-hungry mining for proof of stake, where people lock up coins to help secure the network."},
+ {id:'cr8',s:'crypto',t:'myth',hook:"If a crypto exchange collapses, your coins are protected like bank savings.",isTrue:false,body:"UK bank deposits are protected up to a limit by the FSCS. Crypto on an exchange isn't — when FTX collapsed in 2022, customers were left waiting to get money back."},
+ {id:'cr9',s:'crypto',t:'guess',hook:"One bitcoin splits into how many 'satoshis'?",min:1,max:500,step:1,answer:100,unit:'million',body:"100 million. The smallest unit is named after Bitcoin's creator, so you can own a sliver of a coin."},
+ {id:'cr10',s:'crypto',t:'fact',hook:"Nobody has proven who created Bitcoin.",body:"'Satoshi Nakamoto' published the Bitcoin paper in 2008 and vanished online by 2011. Plenty have claimed the name — none has proven it."},
+ // ---- Space (more)
+ {id:'sp6',s:'space',t:'fact',hook:"Mars has a volcano about two and a half times taller than Everest.",body:"Olympus Mons rises roughly 22 km. Lower gravity and no moving tectonic plates let it grow enormous over millions of years."},
+ {id:'sp7',s:'space',t:'myth',hook:"You can see the Great Wall of China from space with the naked eye.",isTrue:false,body:"It's long but narrow, and much the same colour as the land around it. Astronauts in orbit say they can't pick it out without help."},
+ {id:'sp8',s:'space',t:'guess',hook:"Roughly how many Earths could fit inside the Sun?",min:0.1,max:5,step:0.1,answer:1.3,unit:'million',body:"About 1.3 million. The Sun makes up around 99.8% of all the mass in the solar system."},
+ {id:'sp9',s:'space',t:'fact',hook:"Astronauts on the ISS see about 16 sunrises a day.",body:"The station laps the Earth roughly every 90 minutes at around 17,500 mph, so day and night flash by."},
+ {id:'sp10',s:'space',t:'quiz',hook:"What's inside a black hole's event horizon that can escape?",options:['Only light','Only radio waves','Nothing at all'],answer:2,body:"Nothing — not even light. Gravity is so strong that escaping would mean going faster than light, which nothing can."},
+ // ---- History (more)
+ {id:'hi6',s:'history',t:'myth',hook:"Napoleon was unusually short.",isTrue:false,body:"He was around 5 ft 7, average for his time. Confusion between French and English inches, plus British cartoons, created the myth."},
+ {id:'hi7',s:'history',t:'guess',hook:"How many years did the Berlin Wall stand?",min:5,max:60,step:1,answer:28,unit:'years',body:"28 years, from 1961 to 1989. It came down on 9 November 1989, and Germany reunified less than a year later."},
+ {id:'hi8',s:'history',t:'fact',hook:"Woolly mammoths were still alive when the pyramids were built.",body:"A small population survived on Wrangel Island, off Siberia, until around 4,000 years ago — centuries after the Great Pyramid went up."},
+ {id:'hi9',s:'history',t:'fact',hook:"The fax machine was invented before the telephone.",body:"Alexander Bain patented an early image-sending device in 1843. Bell's telephone patent didn't come until 1876."},
+ {id:'hi10',s:'history',t:'quiz',hook:"The Titanic sank in which year?",options:['1905','1912','1921'],answer:1,body:"April 1912, on its first voyage from Southampton to New York. More than 1,500 people died."},
+ // ---- Psychology (more)
+ {id:'ps6',s:'psychology',t:'quiz',hook:"You buy a new car, then see the same model everywhere. What's that called?",options:['The frequency illusion','The placebo effect','Déjà vu'],answer:0,body:"Also called the Baader–Meinhof phenomenon. They were always there — your brain has just started flagging them as important."},
+ {id:'ps7',s:'psychology',t:'myth',hook:"People are either left-brained or right-brained.",isTrue:false,body:"Some tasks lean more on one side, but brain scans don't show people who favour one half overall. Creativity and logic both use the whole brain."},
+ {id:'ps8',s:'psychology',t:'fact',hook:"Unpredictable rewards are why scrolling is so hard to stop.",body:"Psychologists call it a variable reward schedule — the same trick behind slot machines. You never know if the next swipe is the good one. Here, at least, it's teaching you something."},
+ {id:'ps9',s:'psychology',t:'guess',hook:"A famous 1956 paper said short-term memory holds about how many items?",min:1,max:20,step:1,answer:7,unit:'items',body:"Seven, plus or minus two — George Miller's 'magical number'. Later research suggests it's closer to four chunks of information."},
+ {id:'ps10',s:'psychology',t:'fact',hook:"Sunk cost: you keep going because of what you've already spent.",body:"Finishing a bad film because you paid for the ticket, or holding a losing share to 'get back to even'. What's spent is gone either way — only what comes next counts."}
+];

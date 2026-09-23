@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tangent — swipe up, learn something</title>
+<meta name="description" content="A free, swipeable feed of bite-size lessons on science, money, cars, space, history and more.">
+<meta name="theme-color" content="#6C3CF0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tangent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --chrome:#FFFFFF; --ink:#16141D; --muted:#6B6878; --line:#E7E4EE; --page:#EEECF3; --accent:#6C3CF0;
+  --font:"Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --chrome:#18161F; --ink:#F2F0F8; --muted:#A09CB0; --line:#2C2936; --page:#0F0E14; --accent:#9C7BFF; }
+}
+:root[data-theme="dark"]{ --chrome:#18161F; --ink:#F2F0F8; --muted:#A09CB0; --line:#2C2936; --page:#0F0E14; --accent:#9C7BFF; }
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{background:var(--page);color:var(--ink);font-family:var(--font);display:flex;justify-content:center;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.app{width:min(100%,500px);height:100%;display:flex;flex-direction:column;background:var(--chrome);position:relative;overflow:hidden}
+header{height:54px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);position:relative;z-index:5}
+.mark{font-weight:800;font-size:23px;letter-spacing:-.03em;font-variation-settings:"opsz" 96;margin-right:auto;display:flex;align-items:center;gap:6px}
+.mark svg{width:22px;height:22px}
+.hbtn{border:0;background:none;display:flex;align-items:center;gap:4px;font-weight:700;font-size:15px;padding:6px;border-radius:10px}
+.hbtn svg{width:22px;height:22px}
+.combo{font-weight:800;font-size:14px;padding:4px 9px;border-radius:999px;background:var(--accent);color:#fff;display:none}
+.combo.on{display:inline-block;animation:pop .35s}
+.ring{position:relative;width:36px;height:36px}
+.ring svg{width:36px;height:36px;transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;font-weight:800}
+.xpfly{position:absolute;right:16px;top:56px;font-weight:800;font-size:20px;color:var(--accent);pointer-events:none;opacity:0;z-index:6}
+.xpfly.go{animation:fly .9s ease-out}
+@keyframes fly{0%{opacity:0;transform:translateY(10px)}20%{opacity:1}100%{opacity:0;transform:translateY(-16px)}}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+#feed{flex:1;position:relative;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;overflow-anchor:none;scrollbar-width:none}
+#feed::-webkit-scrollbar{display:none}
+
+.card{height:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden;background:var(--c-bg);color:var(--c-ink);display:flex;flex-direction:column;padding:20px 78px 26px 22px;user-select:none}
+.pat{position:absolute;inset:0;color:var(--c-ink);opacity:.13;pointer-events:none}
+.p-science{background:radial-gradient(currentColor 1.6px,transparent 1.9px) 0 0/22px 22px}
+.p-economics{background:repeating-linear-gradient(0deg,currentColor 0 1px,transparent 1px 28px)}
+.p-cars{background:repeating-linear-gradient(115deg,transparent 0 70px,currentColor 70px 96px,transparent 96px 110px,currentColor 110px 118px,transparent 118px 260px)}
+.p-investing{background:linear-gradient(currentColor 1px,transparent 1px) 0 0/34px 34px,linear-gradient(90deg,currentColor 1px,transparent 1px) 0 0/34px 34px}
+.p-crypto{background:repeating-linear-gradient(45deg,currentColor 0 1px,transparent 1px 26px),repeating-linear-gradient(-45deg,currentColor 0 1px,transparent 1px 26px)}
+.p-space{opacity:.4;background:radial-gradient(currentColor 1px,transparent 1.5px) 0 0/47px 53px,radial-gradient(currentColor 1.4px,transparent 2px) 13px 29px/89px 71px,radial-gradient(currentColor .8px,transparent 1.2px) 31px 7px/31px 37px}
+.p-history{background:repeating-radial-gradient(circle at 100% 100%,currentColor 0 1px,transparent 1px 30px)}
+.p-psychology{background:repeating-radial-gradient(circle at 0% 40%,currentColor 0 2px,transparent 2px 22px)}
+.p-any{background:radial-gradient(currentColor 3px,transparent 3.5px) 0 0/40px 40px}
+
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative}
+.pill{font-size:14px;font-weight:700;padding:6px 11px;border-radius:999px;background:color-mix(in srgb,var(--c-ink) 14%,transparent)}
+.kind{font-size:14px;font-weight:500;opacity:.8}
+.recall{font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--c-ink);color:var(--c-bg)}
+.main{margin:auto 0;position:relative;padding:16px 0}
+.hook{font-size:clamp(30px,8.6vw,48px);line-height:1.02;font-weight:800;letter-spacing:-.025em;font-variation-settings:"opsz" 96;margin:0;text-wrap:balance}
+.body{font-size:18px;line-height:1.45;max-width:34ch;margin:18px 0 0;font-weight:450}
+.hidden{display:none}
+.reveal{animation:rise .35s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hint{margin-top:20px;font-size:15px;font-weight:600;opacity:.75;display:flex;align-items:center;gap:6px}
+
+.opts{display:grid;gap:10px;margin-top:22px}
+.opt{text-align:left;border:2px solid transparent;background:color-mix(in srgb,var(--c-ink) 12%,transparent);border-radius:16px;padding:14px 16px;font-size:17px;font-weight:650;transition:transform .12s}
+.opt:active{transform:scale(.98)}
+.opt.right{background:var(--c-ink);color:var(--c-bg)}
+.opt.wrong{border-color:var(--c-ink);opacity:.6;text-decoration:line-through}
+.opt:disabled{cursor:default}
+.duo{grid-template-columns:1fr 1fr}
+.duo .opt{text-align:center;font-size:19px;padding:18px}
+.verdict{font-weight:800;font-size:20px;margin-top:16px}
+
+.guess{margin-top:22px}
+.gval{font-size:40px;font-weight:800;letter-spacing:-.02em}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:99px;background:color-mix(in srgb,var(--c-ink) 22%,transparent);margin:14px 0 16px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--c-ink);border:4px solid var(--c-bg);box-shadow:0 0 0 2px var(--c-ink)}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--c-ink);border:4px solid var(--c-bg)}
+.lock{border:0;border-radius:14px;padding:13px 20px;font-size:17px;font-weight:800;background:var(--c-ink);color:var(--c-bg)}
+.scale{position:relative;height:60px;margin-top:10px}
+.scale .bar{position:absolute;left:0;right:0;top:18px;height:4px;border-radius:4px;background:color-mix(in srgb,var(--c-ink) 25%,transparent)}
+.scale .m{position:absolute;top:0;transform:translateX(-50%);font-size:12px;font-weight:700;white-space:nowrap;text-align:center}
+.scale .m::after{content:"";display:block;width:14px;height:14px;border-radius:50%;margin:3px auto 0;background:var(--c-ink)}
+.scale .m.low{top:18px;display:flex;flex-direction:column-reverse;align-items:center}.scale .m.low::after{margin:0 auto 3px}
+.scale .m.you::after{background:transparent;border:3px solid var(--c-ink)}
+
+.rail{position:absolute;right:10px;bottom:30px;display:flex;flex-direction:column;gap:16px;z-index:2}
+.rb{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--c-ink);padding:0}
+.rb i{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c-ink) 15%,transparent);transition:transform .15s}
+.rb svg{width:25px;height:25px}
+.rb.on i{background:var(--c-ink);color:var(--c-bg)}
+.rb.on i{animation:pop .3s}
+.rb.deep i{background:var(--c-ink);color:var(--c-bg)}
+
+.burst{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;pointer-events:none;color:var(--c-ink);animation:burst .7s ease-out forwards;z-index:3}
+@keyframes burst{0%{transform:scale(.3) rotate(-12deg);opacity:0}25%{transform:scale(1.1) rotate(6deg);opacity:1}100%{transform:scale(1.5) translateY(-40px);opacity:0}}
+.swipe{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-weight:700;font-size:14px;opacity:.8;animation:bob 1.6s ease-in-out infinite;pointer-events:none}
+@keyframes bob{50%{transform:translateY(-6px)}}
+
+.gen .dots{display:flex;gap:8px;margin-top:24px}
+.gen .dots b{width:14px;height:14px;border-radius:50%;background:var(--c-ink);animation:blink 1.2s infinite}
+.gen .dots b:nth-child(2){animation-delay:.2s}.gen .dots b:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{border:2px solid currentColor;background:none;border-radius:999px;padding:9px 14px;font-weight:700;font-size:15px}
+.chip.sel{background:var(--ink);color:var(--chrome);border-color:var(--ink)}
+.card .chip{color:var(--c-ink)}
+.askrow{display:flex;gap:8px;margin-top:18px}
+.askrow input{flex:1;min-width:0;font:inherit;font-size:17px;padding:13px 14px;border-radius:14px;border:2px solid currentColor;background:transparent;color:inherit}
+.askrow input::placeholder{color:inherit;opacity:.6}
+.askrow button{border:0;border-radius:14px;padding:0 16px;font-weight:800;background:var(--ink);color:var(--chrome)}
+.card .askrow button{background:var(--c-ink);color:var(--c-bg)}
+
+.overlay{position:absolute;inset:0;z-index:20;background:var(--chrome);display:flex;flex-direction:column;padding:28px 24px;overflow:auto}
+.overlay h1{font-size:clamp(44px,13vw,64px);line-height:.95;letter-spacing:-.04em;font-variation-settings:"opsz" 96;margin:auto 0 10px;font-weight:800}
+.overlay p{font-size:18px;line-height:1.45;color:var(--muted);margin:0 0 8px;max-width:36ch}
+.big{margin-top:26px;border:0;border-radius:16px;padding:17px;font-size:18px;font-weight:800;background:var(--ink);color:var(--chrome)}
+.big:disabled{opacity:.35}
+
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:15;display:none}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:86%;overflow:auto;background:var(--chrome);border-radius:24px 24px 0 0;padding:10px 20px 28px;z-index:16;transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility .3s}
+.sheet.open{transform:none;visibility:visible}
+.sheet-bg.open{display:block}
+.close{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:50%;border:0;background:var(--line);font-size:15px;font-weight:700}
+.grab{width:44px;height:5px;border-radius:5px;background:var(--line);margin:0 auto 14px}
+.sheet h2{font-size:28px;letter-spacing:-.02em;margin:6px 0 4px}
+.sheet h3{font-size:18px;margin:24px 0 10px}
+.stats{display:flex;gap:10px}
+.stat{flex:1;border:1px solid var(--line);border-radius:16px;padding:12px}
+.stat b{display:block;font-size:26px;letter-spacing:-.02em}
+.stat span{font-size:13px;color:var(--muted)}
+.mast{display:grid;grid-template-columns:96px 1fr 42px;gap:10px;align-items:center;font-size:15px;margin:8px 0}
+.mast .t{height:10px;border-radius:10px;background:var(--line);overflow:hidden}
+.mast .t i{display:block;height:100%}
+.mast em{font-style:normal;color:var(--muted);text-align:right;font-size:13px}
+.saved{border-left:6px solid;padding:4px 0 4px 12px;margin:12px 0}
+.saved b{display:block;font-size:17px;line-height:1.25}
+.saved span{font-size:14px;color:var(--muted);line-height:1.4}
+.muted{color:var(--muted);font-size:15px}
+.link{border:0;background:none;color:var(--muted);text-decoration:underline;padding:0;margin-top:24px;font-size:14px}
+.sheet .chip{color:var(--ink)}
+
+.toast{position:absolute;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--chrome);padding:12px 16px;border-radius:14px;font-weight:650;font-size:15px;opacity:0;transition:.25s;z-index:30;width:max-content;max-width:88%;text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="mark" aria-label="Tangent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="9" cy="14" r="6"/><path d="M3 20 21 4"/></svg>tangent
+    </div>
+    <span class="combo" id="combo"></span>
+    <button class="hbtn" id="askBtn" aria-label="Topics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+    </button>
+    <button class="hbtn" id="streakBtn" aria-label="Daily streak"><span aria-hidden="true">🔥</span><span id="streak">1</span></button>
+    <button class="hbtn ring" id="youBtn" aria-label="Your progress">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--line)" stroke-width="4"/><circle id="ringArc" cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <span id="lvl">1</span>
+    </button>
+    <div class="xpfly" id="xpfly"></div>
+  </header>
+  <main id="feed" aria-label="Learning feed"></main>
+
+  <div class="overlay" id="onboard">
+    <h1>Swipe up.<br>Learn something.<br>Keep going.</h1>
+    <p>Pick what you're into. The feed learns from what you like, skip and get wrong — and brings back the ones you missed. Free, no account, no ads.</p>
+    <div class="chips" id="pickChips"></div>
+    <button class="big" id="startBtn" disabled>Start scrolling</button>
+  </div>
+
+  <div class="sheet-bg" id="sheetBg"></div>
+  <section class="sheet" id="sheet" aria-modal="true" role="dialog"></section>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+
+<script src="cards.js"></script>
+<script>
+const SUBJECTS = {
+  science:{label:'Science',bg:'#2F5BEA',ink:'#FFFFFF'},
+  economics:{label:'Economics',bg:'#F4C430',ink:'#1C1500'},
+  cars:{label:'Cars',bg:'#D7322A',ink:'#FFFFFF'},
+  investing:{label:'Investing',bg:'#0F7B53',ink:'#FFFFFF'},
+  crypto:{label:'Crypto',bg:'#6C3CF0',ink:'#FFFFFF'},
+  space:{label:'Space',bg:'#0B1640',ink:'#EAF0FF'},
+  history:{label:'History',bg:'#E9D8B4',ink:'#3A2210'},
+  psychology:{label:'Psychology',bg:'#FF8FB1',ink:'#3A0A1C'},
+  any:{label:'Anything',bg:'#127E86',ink:'#FFFFFF'}
+};
+const KIND = {fact:'Did you know',quiz:'Quick quiz',myth:'Myth or fact?',guess:'Guess the number'};
+
+const DECK = (window.TANGENT_CARDS || []).filter(c=>c && c.id && SUBJECTS[c.s] && KIND[c.t]);
+
+// ---------- state ----------
+const KEY='tangent.v1';
+let state={xp:0,streak:0,lastDay:'',combo:0,weights:{},liked:[],saved:[],stats:{},seen:[],picked:[],onboarded:false};
+try{const raw=localStorage.getItem(KEY); if(raw) state=Object.assign(state,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+Object.keys(SUBJECTS).forEach(k=>{if(state.weights[k]==null) state.weights[k]=1; if(!state.stats[k]) state.stats[k]={seen:0,correct:0,answered:0};});
+
+let uidN=0; const uid=()=>'u'+(++uidN)+Date.now().toString(36);
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function fmt(n,c){const v=c.plain?String(Math.round(n)):Math.abs(n)>=1000?Math.round(n).toLocaleString('en-GB'):(Math.round(n*10)/10).toString();return (c.pre||'')+v+(c.unit?' '+c.unit:'');}
+
+
+// ---------- streak & level ----------
+function dayStr(d){return d.toISOString().slice(0,10);}
+function touchStreak(){
+  const today=dayStr(new Date()); const y=new Date(); y.setDate(y.getDate()-1);
+  if(state.lastDay===today) return;
+  state.streak = state.lastDay===dayStr(y) ? state.streak+1 : 1;
+  state.lastDay=today; save();
+}
+function levelInfo(){const L=Math.floor(Math.sqrt(state.xp/50))+1;const lo=50*(L-1)**2,hi=50*L**2;return {L,p:(state.xp-lo)/(hi-lo)};}
+function renderHud(){
+  const {L,p}=levelInfo(); $('#lvl').textContent=L;
+  $('#ringArc').setAttribute('stroke-dashoffset',(94.25*(1-p)).toFixed(2));
+  $('#streak').textContent=state.streak||1;
+  const c=$('#combo'); if(state.combo>=2){c.textContent='×'+Math.min(state.combo,5)+' combo';c.classList.remove('on');void c.offsetWidth;c.classList.add('on');} else c.classList.remove('on');
+}
+function gainXP(n){
+  if(n<=0) return; const before=levelInfo().L; state.xp+=n; touchStreak(); save(); renderHud();
+  const f=$('#xpfly'); f.textContent='+'+n+' xp'; f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+  if(levelInfo().L>before) toast('Level '+levelInfo().L+' — nice.');
+}
+let toastT; function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600);}
+function nudge(s,d){state.weights[s]=Math.max(0.2,Math.min(4,(state.weights[s]||1)+d));}
+
+// ---------- feed engine ----------
+function goTo(el,smooth){ if(!el) return; feedEl.scrollTo({top:el.offsetTop,behavior:smooth?'smooth':'auto'}); }
+const feedEl=$('#feed');
+let feed=[]; let active=0; let shown=0; let lastSubj=null; let lastType=null; let recalls=[];
+let pool=[];
+function buildPool(){
+  let fresh=DECK.filter(c=>!state.seen.includes(c.id));
+  if(fresh.length<8){state.seen=[];fresh=DECK.slice();save();}
+  pool=shuffle(fresh);
+}
+function pickNext(){
+  const di=recalls.findIndex(r=>r.due<=shown);
+  if(di>-1){const r=recalls.splice(di,1)[0];return Object.assign({},r.card,{uid:uid(),recall:true});}
+  if(!pool.length) return {t:'end',s:'any',uid:uid()};
+  let cands=pool.filter(c=>c.s!==lastSubj&&c.t!==lastType); if(!cands.length) cands=pool.filter(c=>c.s!==lastSubj); if(!cands.length) cands=pool;
+  const tot=cands.reduce((a,c)=>a+(state.weights[c.s]||1),0); let r=Math.random()*tot; let pick=cands[0];
+  for(const c of cands){r-=(state.weights[c.s]||1); if(r<=0){pick=c;break;}}
+  pool.splice(pool.indexOf(pick),1); lastSubj=pick.s; lastType=pick.t;
+  return Object.assign({},pick,{uid:uid()});
+}
+function ensureAhead(){
+  while(feed.length-active<4){
+    const last=feed[feed.length-1]; if(last && last.card.t==='end') break;
+    addCard(pickNext(),feed.length);
+  }
+}
+function addCard(card,index){
+  const el=renderCard(card); const item={card,el,start:0,touched:false,counted:false};
+  const ref=feed[index]?feed[index].el:null; feedEl.insertBefore(el,ref); feed.splice(index,0,item);
+  io.observe(el); return item;
+}
+function removeItem(item){const i=feed.indexOf(item);if(i>-1)feed.splice(i,1);io.unobserve(item.el);item.el.remove();}
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    const item=feed.find(f=>f.el===en.target); if(!item) return;
+    if(en.isIntersecting && en.intersectionRatio>=0.6){
+      active=feed.indexOf(item); item.start=performance.now();
+      if(!item.counted && item.card.t!=='end' && item.card.t!=='gen'){item.counted=true;shown++;
+        if(state.stats[item.card.s]) state.stats[item.card.s].seen++;
+        if(item.card.id && !item.card.id.startsWith('ai-') && !state.seen.includes(item.card.id)) state.seen.push(item.card.id);
+        save();}
+      ensureAhead();
+    } else if(item.start){
+      const dwell=performance.now()-item.start; item.start=0;
+      if(item.card.s && item.card.t!=='end' && item.card.t!=='gen'){
+        if(dwell<1300 && !item.touched) nudge(item.card.s,-0.15);
+        else if(dwell>7000) nudge(item.card.s,0.1);
+        save();
+      }
+    }
+  });
+},{root:feedEl,threshold:[0,0.6]});
+
+// ---------- card rendering ----------
+const ICON={
+  heart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 3 4.5 6.9 4.5c2.1 0 3.6 1.2 5.1 3 1.5-1.8 3-3 5.1-3 3.9 0 6 4 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>',
+  save:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z"/></svg>',
+  deep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 12a2 2 0 1 1 2-2 4 4 0 1 1-4-4 6 6 0 1 1-6 6"/><path d="M4 12v6h6"/></svg>'
+};
+function subjOf(card){return SUBJECTS[card.s]||SUBJECTS.any;}
+function renderCard(card){
+  const S=subjOf(card); const el=document.createElement('article');
+  el.className='card'+(card.t==='gen'?' gen':''); el.style.setProperty('--c-bg',S.bg); el.style.setProperty('--c-ink',S.ink);
+  const label=esc(card.label||S.label);
+  let inner='<div class="pat p-'+(SUBJECTS[card.s]?card.s:'any')+'"></div>';
+  if(card.t==='end'){ inner+=endCardHTML(); el.innerHTML=inner; wireEnd(el); return el; }
+  if(card.t==='gen'){ inner+='<div class="top"><span class="pill">'+label+'</span></div><div class="main"><p class="hook">Digging into '+label.toLowerCase()+'…</p><p class="body">Writing a fresh run of cards just for you.</p><div class="dots"><b></b><b></b><b></b></div></div>'; el.innerHTML=inner; return el; }
+  inner+='<div class="top"><span class="pill">'+label+'</span><span class="kind">'+KIND[card.t]+'</span>'+(card.recall?'<span class="recall">Round two</span>':'')+'</div>';
+  inner+='<div class="main"><p class="hook">'+esc(card.hook)+'</p>';
+  if(card.t==='fact'){inner+='<p class="hint" data-hint>Tap to see why</p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
+  if(card.t==='quiz'){inner+='<div class="opts">'+card.options.map((o,i)=>'<button class="opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div><p class="verdict hidden" data-v></p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
+  if(card.t==='myth'){inner+='<div class="opts duo"><button class="opt" data-b="0">Myth</button><button class="opt" data-b="1">Fact</button></div><p class="verdict hidden" data-v></p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
+  if(card.t==='guess'){const span=card.max-card.min; let mid; for(let k=0;k<20;k++){mid=card.min+Math.round(Math.random()*span/card.step)*card.step; if(Math.abs(mid-card.answer)>span*0.2) break;} mid=+mid.toFixed(4);
+    inner+='<div class="guess"><div class="gval" data-gv>'+fmt(mid,card)+'</div><input type="range" min="'+card.min+'" max="'+card.max+'" step="'+card.step+'" value="'+mid+'" aria-label="Your guess"><button class="lock">Lock it in</button><div class="scale hidden" data-scale><div class="bar"></div></div></div><p class="verdict hidden" data-v></p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
+  inner+='</div>';
+  const liked=card.id&&state.liked.includes(card.id), saved=card.id&&state.saved.some(x=>x.id===card.id);
+  inner+='<div class="rail"><button class="rb'+(liked?' on':'')+'" data-a="like" aria-label="Like"><i>'+ICON.heart+'</i>Like</button><button class="rb'+(saved?' on':'')+'" data-a="save" aria-label="Save"><i>'+ICON.save+'</i>Save</button><button class="rb deep" data-a="deep" aria-label="More like this"><i>'+ICON.deep+'</i>More</button></div>';
+  if(feed.length===0) inner+='<div class="swipe">Swipe up for the next one</div>';
+  el.innerHTML=inner; wireCard(el,card); return el;
+}
+function itemFor(el){return feed.find(f=>f.el===el);}
+function markTouched(el){const it=itemFor(el);if(it)it.touched=true;}
+function showBody(el){el.querySelectorAll('[data-body],[data-v]').forEach(n=>{n.classList.remove('hidden');n.classList.add('reveal');});}
+
+function answer(el,card,correct,points){
+  markTouched(el); const st=state.stats[card.s]; if(st){st.answered++; if(correct) st.correct++;}
+  nudge(card.s,0.15);
+  if(correct){state.combo++; gainXP(points*Math.min(state.combo,5)); if(navigator.vibrate) try{navigator.vibrate(18);}catch(e){}}
+  else{ state.combo=0; const base=Object.assign({},card); delete base.uid; delete base.recall; recalls.push({card:base,due:shown+(card.recall?8:5)}); save(); renderHud(); }
+  return correct;
+}
+function wireCard(el,card){
+  let lastTap=0;
+  el.addEventListener('click',e=>{
+    if(e.target.closest('button,input')) return;
+    const now=Date.now();
+    if(now-lastTap<320){ doLike(el,card,true,e); lastTap=0; return; }
+    lastTap=now;
+    if(card.t==='fact' && !el.dataset.revealed){ el.dataset.revealed=1; el.querySelector('[data-hint]').remove(); showBody(el); markTouched(el); gainXP(2); }
+  });
+  el.querySelectorAll('.rb').forEach(b=>b.addEventListener('click',()=>{
+    const a=b.dataset.a; if(a==='like') doLike(el,card,false); if(a==='save') doSave(el,card,b); if(a==='deep') goDeeper(card);
+  }));
+  if(card.t==='quiz'){
+    el.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      const i=+b.dataset.i; const ok=i===card.answer;
+      el.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(+x.dataset.i===card.answer) x.classList.add('right');});
+      if(!ok) b.classList.add('wrong');
+      el.querySelector('[data-v]').textContent= ok ? (card.recall?'Locked in. That one\'s yours now.':'Correct.') : 'Not quite — this one will come back.';
+      answer(el,card,ok,10); showBody(el);
+    }));
+  }
+  if(card.t==='myth'){
+    el.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      const pick=b.dataset.b==='1'; const ok=pick===!!card.isTrue;
+      el.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if((x.dataset.b==='1')===!!card.isTrue) x.classList.add('right');});
+      if(!ok) b.classList.add('wrong');
+      el.querySelector('[data-v]').textContent=(card.isTrue?'Fact. ':'Myth. ')+(ok?(card.recall?'Locked in.':'You got it.'):'Caught you — it\'ll come back.');
+      answer(el,card,ok,10); showBody(el);
+    }));
+  }
+  if(card.t==='guess'){
+    const r=el.querySelector('input'), gv=el.querySelector('[data-gv]'), lock=el.querySelector('.lock');
+    r.addEventListener('input',()=>{gv.textContent=fmt(+r.value,card);markTouched(el);});
+    lock.addEventListener('click',()=>{
+      const v=+r.value, span=card.max-card.min, err=Math.abs(v-card.answer)/span;
+      r.disabled=true; lock.remove();
+      const pts=Math.round(15*(1-Math.min(err*4,1))); const ok=err<=0.08;
+      const pos=x=>((x-card.min)/span*100).toFixed(1)+'%';
+      const sc=el.querySelector('[data-scale]'); sc.classList.remove('hidden');
+      sc.insertAdjacentHTML('beforeend','<div class="m you'+(Math.abs(v-card.answer)/span<0.16?' low':'')+'" style="left:'+pos(v)+'">You</div><div class="m" style="left:'+pos(card.answer)+'">'+esc(fmt(card.answer,card))+'</div>');
+      const pctOff=Math.round(Math.abs(v-card.answer)/Math.max(Math.abs(card.answer),1e-9)*100);
+      const off=card.plain?Math.round(Math.abs(v-card.answer))+' years':pctOff+'%'; el.querySelector('[data-v]').textContent= err<=0.02?'Spot on.':ok?'Close — '+off+' off.':'Way off — '+off+' out. It\'ll come back.';
+      gv.textContent=fmt(card.answer,card);
+      answer(el,card,ok,ok?pts:0); showBody(el);
+    });
+  }
+}
+function doLike(el,card,fromTap,e){
+  markTouched(el); const b=el.querySelector('[data-a=like]'); const key=card.id||card.uid; const i=state.liked.indexOf(key);
+  if(fromTap){
+    const r=el.getBoundingClientRect(); const burst=document.createElement('div'); burst.className='burst'; burst.innerHTML=ICON.heart;
+    burst.style.left=(e.clientX-r.left)+'px'; burst.style.top=(e.clientY-r.top)+'px'; el.appendChild(burst); setTimeout(()=>burst.remove(),750);
+    if(i>-1) return;
+  }
+  if(i>-1){state.liked.splice(i,1);b.classList.remove('on');nudge(card.s,-0.4);}
+  else{state.liked.push(key);b.classList.add('on');nudge(card.s,0.6);gainXP(1);}
+  save();
+}
+function doSave(el,card,b){
+  markTouched(el); const key=card.id||card.uid; const i=state.saved.findIndex(x=>x.id===key);
+  if(i>-1){state.saved.splice(i,1);b.classList.remove('on');toast('Removed from saved');}
+  else{state.saved.unshift({id:key,s:card.s,label:card.label||'',hook:card.hook,body:card.body});b.classList.add('on');nudge(card.s,0.4);toast('Saved — tap your level ring to see it');}
+  save();
+}
+
+// ---------- more like this ----------
+function queueSubject(s,n,label){
+  const picks=shuffle(pool.filter(c=>c.s===s)).slice(0,n);
+  if(!picks.length){ toast("You've seen every "+SUBJECTS[s].label+" card for now — new ones are on the way."); return false; }
+  picks.forEach((c,i)=>{ pool.splice(pool.indexOf(c),1); addCard(Object.assign({},c,{uid:uid()}),active+1+i); });
+  nudge(s,0.5); save(); lastSubj=s;
+  requestAnimationFrame(()=>feed[active+1]&&goTo(feed[active+1].el,true));
+  return true;
+}
+function goDeeper(card){ queueSubject(card.s,3); }
+
+// ---------- end card ----------
+function endCardHTML(){
+  return '<div class="top"><span class="pill">You cleared the deck</span></div><div class="main"><p class="hook">That\'s every card — for now.</p><p class="body">Run it again shuffled. Anything you got wrong will keep coming back until it sticks.</p><button class="lock" data-restart style="margin-top:22px">Run the deck again</button></div>';
+}
+function wireEnd(el){
+  el.querySelector('[data-restart]').addEventListener('click',()=>{state.seen=[];save();buildPool();const it=itemFor(el);const i=feed.indexOf(it);removeItem(it);ensureAhead();if(feed[i])goTo(feed[i].el);});
+}
+
+// ---------- sheets ----------
+function openSheet(html,wire){const sh=$('#sheet');sh.innerHTML='<div class="grab"></div><button class="close" aria-label="Close" data-close>✕</button>'+html;sh.querySelector('[data-close]').addEventListener('click',closeSheet);$('#sheetBg').classList.add('open');sh.classList.add('open');if(wire)wire(sh);}
+function closeSheet(){$('#sheet').classList.remove('open');$('#sheetBg').classList.remove('open');}
+$('#sheetBg').addEventListener('click',closeSheet);
+function youSheet(){
+  const {L}=levelInfo();
+  let h='<h2>Level '+L+'</h2><p class="muted">'+state.xp+' xp · answer streaks multiply your xp, up to ×5.</p>';
+  h+='<div class="stats"><div class="stat"><b>🔥 '+(state.streak||1)+'</b><span>day streak</span></div><div class="stat"><b>'+Object.values(state.stats).reduce((a,s)=>a+s.seen,0)+'</b><span>cards seen</span></div><div class="stat"><b>'+recalls.length+'</b><span>coming back</span></div></div>';
+  h+='<h3>Your brain map</h3>';
+  Object.keys(SUBJECTS).forEach(k=>{const st=state.stats[k];if(!st||(!st.seen&&k==='any'))return;const acc=st.answered?st.correct/st.answered:0;
+    h+='<div class="mast"><span>'+SUBJECTS[k].label+'</span><div class="t"><i style="width:'+Math.round(acc*100)+'%;background:'+SUBJECTS[k].bg+'"></i></div><em>'+(st.answered?Math.round(acc*100)+'%':'—')+'</em></div>';});
+  h+='<h3>Saved</h3>'+(state.saved.length?state.saved.map(x=>'<div class="saved" style="border-color:'+(SUBJECTS[x.s]||SUBJECTS.any).bg+'"><b>'+esc(x.hook)+'</b><span>'+esc(x.body)+'</span></div>').join(''):'<p class="muted">Tap Save on any card to keep it here.</p>');
+  h+='<button class="link" data-reset>Reset all progress</button>';
+  openSheet(h,sh=>sh.querySelector('[data-reset]').addEventListener('click',()=>{if(confirm('Reset xp, streak, saved cards and preferences?')){try{localStorage.removeItem(KEY);}catch(e){}location.reload();}}));
+}
+function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}
+function installHTML(){
+  if(isStandalone()) return '';
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(deferredPrompt) return '<h3>Get the app</h3><button class="big" data-install style="margin-top:4px;width:100%">Install Tangent</button>';
+  return '<h3>Get the app</h3><p class="muted">'+(ios?'In Safari, tap the Share button, then <b>Add to Home Screen</b>.':'Open your browser menu and choose <b>Install app</b> or <b>Add to Home screen</b>.')+' It works offline, too.</p>';
+}
+function askSheet(){
+  let h='<h2>Jump into a topic</h2><p class="muted">Pick a subject and the next few cards are all about it.</p><div class="chips">'+
+  Object.keys(SUBJECTS).filter(k=>k!=='any').map(k=>{const left=pool.filter(c=>c.s===k).length;return '<button class="chip" data-s="'+k+'"'+(left?'':' disabled style="opacity:.4"')+'>'+SUBJECTS[k].label+' <span style="opacity:.6">'+left+'</span></button>';}).join('')+'</div>'+installHTML();
+  openSheet(h,sh=>{
+    sh.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{closeSheet();queueSubject(b.dataset.s,4);}));
+    const ib=sh.querySelector('[data-install]'); if(ib) ib.addEventListener('click',doInstall);
+  });
+}
+$('#youBtn').addEventListener('click',youSheet);
+$('#streakBtn').addEventListener('click',()=>toast('🔥 '+(state.streak||1)+'-day streak. Learn something tomorrow to keep it.'));
+$('#askBtn').addEventListener('click',askSheet);
+
+// ---------- keyboard ----------
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('input')) return;
+  if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();goTo(feed[Math.min(active+1,feed.length-1)]?.el,true);}
+  if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();goTo(feed[Math.max(active-1,0)]?.el,true);}
+  if(e.key==='Escape') closeSheet();
+});
+
+// ---------- onboarding & start ----------
+function start(){
+  if(!DECK.length){toast('Cards failed to load. Check cards.js is next to index.html.');}
+  $('#onboard').remove(); touchStreak(); buildPool();
+  const intro=DECK.find(c=>c.id==='ps1');
+  if(!state.seen.includes('ps1')){pool.splice(pool.indexOf(pool.find(c=>c.id==='ps1')),1);addCard(Object.assign({},intro,{uid:uid()}),0);lastSubj='psychology';lastType='fact';}
+  ensureAhead(); renderHud();
+}
+if(state.onboarded){ start(); }
+else{
+  const pc=$('#pickChips'); const chosen=new Set();
+  Object.keys(SUBJECTS).filter(k=>k!=='any').forEach(k=>{const b=document.createElement('button');b.className='chip';b.textContent=SUBJECTS[k].label;
+    b.addEventListener('click',()=>{chosen.has(k)?chosen.delete(k):chosen.add(k);b.classList.toggle('sel');$('#startBtn').disabled=!chosen.size;});pc.appendChild(b);});
+  $('#startBtn').addEventListener('click',()=>{
+    Object.keys(SUBJECTS).forEach(k=>state.weights[k]=chosen.has(k)?2:0.6);
+    state.picked=[...chosen]; state.onboarded=true; save(); start();
+  });
+}
+renderHud();
+
+// ---------- install & offline ----------
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
+async function doInstall(){ if(!deferredPrompt) return; closeSheet(); deferredPrompt.prompt(); try{await deferredPrompt.userChoice;}catch(e){} deferredPrompt=null; }
+function maybeNudgeInstall(){
+  if(isStandalone()||state.installNudged||shown<6) return;
+  state.installNudged=true; save();
+  toast(/iphone|ipad|ipod/i.test(navigator.userAgent)?'Enjoying it? Share → Add to Home Screen to keep it as an app.':'Enjoying it? Tap the topics button to install Tangent as an app.');
+}
+setInterval(maybeNudgeInstall,4000);
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
