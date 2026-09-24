@@ -109,6 +109,14 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .rb.on i{animation:pop .3s}
 .rb.deep i{background:var(--c-ink);color:var(--c-bg)}
 
+.vid{position:relative;margin-top:18px;border-radius:18px;overflow:hidden;background:#000;aspect-ratio:16/9;width:100%}
+.vid.tall{aspect-ratio:9/16;width:auto;height:min(52vh,460px);max-width:100%}
+.vid img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid .play{position:absolute;inset:0;margin:auto;width:72px;height:72px;border-radius:50%;border:0;background:var(--c-ink);color:var(--c-bg);display:grid;place-items:center}
+.vid .play svg{width:30px;height:30px;margin-left:4px}
+.credit{margin-top:10px;font-size:14px;font-weight:600;opacity:.8}
+.credit a{color:inherit}
 .burst{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;pointer-events:none;color:var(--c-ink);animation:burst .7s ease-out forwards;z-index:3}
 @keyframes burst{0%{transform:scale(.3) rotate(-12deg);opacity:0}25%{transform:scale(1.1) rotate(6deg);opacity:1}100%{transform:scale(1.5) translateY(-40px);opacity:0}}
 .swipe{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-weight:700;font-size:14px;opacity:.8;animation:bob 1.6s ease-in-out infinite;pointer-events:none}
@@ -208,7 +216,7 @@ const SUBJECTS = {
   psychology:{label:'Psychology',bg:'#FF8FB1',ink:'#3A0A1C'},
   any:{label:'Anything',bg:'#127E86',ink:'#FFFFFF'}
 };
-const KIND = {fact:'Did you know',quiz:'Quick quiz',myth:'Myth or fact?',guess:'Guess the number'};
+const KIND = {fact:'Did you know',quiz:'Quick quiz',myth:'Myth or fact?',guess:'Guess the number',video:'Watch'};
 
 const DECK = (window.TANGENT_CARDS || []).filter(c=>c && c.id && SUBJECTS[c.s] && KIND[c.t]);
 
@@ -293,6 +301,7 @@ const io=new IntersectionObserver(entries=>{
         save();}
       ensureAhead();
     } else if(item.start){
+      const fr=item.el.querySelector('.vid iframe'); if(fr) fr.remove();
       const dwell=performance.now()-item.start; item.start=0;
       if(item.card.s && item.card.t!=='end' && item.card.t!=='gen'){
         if(dwell<1300 && !item.touched) nudge(item.card.s,-0.15);
@@ -322,6 +331,10 @@ function renderCard(card){
   if(card.t==='fact'){inner+='<p class="hint" data-hint>Tap to see why</p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
   if(card.t==='quiz'){inner+='<div class="opts">'+card.options.map((o,i)=>'<button class="opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div><p class="verdict hidden" data-v></p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
   if(card.t==='myth'){inner+='<div class="opts duo"><button class="opt" data-b="0">Myth</button><button class="opt" data-b="1">Fact</button></div><p class="verdict hidden" data-v></p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
+  if(card.t==='video'){const id=esc(card.yt);
+    inner+='<div class="vid'+(card.short?' tall':'')+'" data-vid="'+id+'"><img src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display=\'none\'"><button class="play" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button></div>';
+    if(card.body) inner+='<p class="body" style="font-size:16px;margin-top:12px">'+esc(card.body)+'</p>';
+    inner+='<p class="credit">'+(card.credit?esc(card.credit)+' · ':'')+'<a href="https://www.youtube.com/watch?v='+id+'" target="_blank" rel="noopener">Watch on YouTube</a></p>';}
   if(card.t==='guess'){const span=card.max-card.min; let mid; for(let k=0;k<20;k++){mid=card.min+Math.round(Math.random()*span/card.step)*card.step; if(Math.abs(mid-card.answer)>span*0.2) break;} mid=+mid.toFixed(4);
     inner+='<div class="guess"><div class="gval" data-gv>'+fmt(mid,card)+'</div><input type="range" min="'+card.min+'" max="'+card.max+'" step="'+card.step+'" value="'+mid+'" aria-label="Your guess"><button class="lock">Lock it in</button><div class="scale hidden" data-scale><div class="bar"></div></div></div><p class="verdict hidden" data-v></p><p class="body hidden" data-body>'+esc(card.body)+'</p>';}
   inner+='</div>';
@@ -353,6 +366,13 @@ function wireCard(el,card){
   el.querySelectorAll('.rb').forEach(b=>b.addEventListener('click',()=>{
     const a=b.dataset.a; if(a==='like') doLike(el,card,false); if(a==='save') doSave(el,card,b); if(a==='deep') goDeeper(card);
   }));
+  if(card.t==='video'){
+    el.querySelector('.play').addEventListener('click',()=>{
+      const box=el.querySelector('.vid'); const id=box.dataset.vid;
+      box.insertAdjacentHTML('beforeend','<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Video"></iframe>');
+      markTouched(el); if(!el.dataset.watched){el.dataset.watched=1;gainXP(3);nudge(card.s,0.2);save();}
+    });
+  }
   if(card.t==='quiz'){
     el.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
       const i=+b.dataset.i; const ok=i===card.answer;

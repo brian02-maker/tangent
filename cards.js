@@ -6,6 +6,7 @@
      quiz  -> {hook, options:[...2-4], answer: index of right option (0 = first), body}
      myth  -> {hook (a claim), isTrue: true|false, body}
      guess -> {hook, min, max, step, answer, unit, pre:'£' (optional prefix), body}
+     video -> {yt: YouTube video ID, short:true for vertical Shorts (optional), credit:'Channel name' (optional), hook, body}
 */
 window.TANGENT_CARDS = [
  // Science
@@ -104,5 +105,26 @@ window.TANGENT_CARDS = [
  {id:'ps7',s:'psychology',t:'myth',hook:"People are either left-brained or right-brained.",isTrue:false,body:"Some tasks lean more on one side, but brain scans don't show people who favour one half overall. Creativity and logic both use the whole brain."},
  {id:'ps8',s:'psychology',t:'fact',hook:"Unpredictable rewards are why scrolling is so hard to stop.",body:"Psychologists call it a variable reward schedule — the same trick behind slot machines. You never know if the next swipe is the good one. Here, at least, it's teaching you something."},
  {id:'ps9',s:'psychology',t:'guess',hook:"A famous 1956 paper said short-term memory holds about how many items?",min:1,max:20,step:1,answer:7,unit:'items',body:"Seven, plus or minus two — George Miller's 'magical number'. Later research suggests it's closer to four chunks of information."},
- {id:'ps10',s:'psychology',t:'fact',hook:"Sunk cost: you keep going because of what you've already spent.",body:"Finishing a bad film because you paid for the ticket, or holding a losing share to 'get back to even'. What's spent is gone either way — only what comes next counts."}
+ {id:'ps10',s:'psychology',t:'fact',hook:"Sunk cost: you keep going because of what you've already spent.",body:"Finishing a bad film because you paid for the ticket, or holding a losing share to 'get back to even'. What's spent is gone either way — only what comes next counts."},
+ // ---- History: what actually happened
+ {id:'hi11',s:'history',t:'myth',hook:"People in Columbus's time thought the Earth was flat.",isTrue:false,body:"Educated Europeans had known it was round since ancient Greece. The real row was about its size, and Columbus got it badly wrong. He only survived because the Americas were in the way."},
+ {id:'hi12',s:'history',t:'myth',hook:"Marie Antoinette said 'Let them eat cake'.",isTrue:false,body:"There's no evidence she ever said it. Rousseau wrote the line about 'a great princess' when Marie Antoinette was still a child in Austria. It was pinned on her later."},
+ {id:'hi13',s:'history',t:'quiz',hook:"How were the people convicted in the Salem witch trials executed?",options:['Burned at the stake','Hanged','Drowned'],answer:1,body:"Nineteen were hanged in 1692, and one man was crushed to death with stones. Nobody was burned at Salem."},
+ {id:'hi14',s:'history',t:'fact',hook:"When Britain abolished slavery, it paid compensation to the slave owners, not the enslaved.",body:"The 1833 Abolition Act paid owners £20 million, around 40% of the government's yearly budget. The loans taken out to fund it weren't fully paid off until 2015."},
+ {id:'hi15',s:'history',t:'fact',hook:"Henry VIII never actually divorced anyone.",body:"His marriages to Catherine of Aragon, Anne Boleyn and Anne of Cleves were annulled, meaning declared never valid. The rhyme says 'divorced', but legally none of them were."},
+ {id:'hi16',s:'history',t:'guess',hook:"Of the original 1215 Magna Carta's clauses, how many are still law in England today?",min:0,max:63,step:1,answer:3,unit:'clauses',body:"Just three, and they come from a later reissue, not the 1215 original. The Pope annulled the first version within about ten weeks."},
+ {id:'hi17',s:'history',t:'fact',hook:"The medieval iron maiden was probably invented centuries after the Middle Ages.",body:"There's no reliable record of one being used in medieval times. The famous examples seem to have been assembled in the 1700s and 1800s for museums and shows."},
+ {id:'hi18',s:'history',t:'guess',hook:"The Great Fire of London in 1666 destroyed over 13,000 homes. How many deaths were officially recorded?",min:0,max:500,step:1,answer:6,unit:'deaths',body:"Only six were recorded. Historians think the real number was higher, since deaths among the poor often went unrecorded. Even so, it was far fewer than people tend to assume."},
+ {id:'hi19',s:'history',t:'fact',hook:"Cleopatra wasn't ethnically Egyptian.",body:"She came from the Ptolemies, a Macedonian Greek dynasty that ruled Egypt for about 300 years after Alexander the Great. She's said to be the first of them to learn Egyptian."},
+ {id:'hi20',s:'history',t:'fact',hook:"Britain didn't win Waterloo on its own.",body:"Only about a third of Wellington's army was British. The rest were mostly German and Dutch-Belgian troops, and the Prussian army's arrival on the battlefield was decisive."},
+ // ---- Videos (YouTube embeds). yt = the video ID from the link, short:true for vertical Shorts
+ {id:'vi1',s:'cars',t:'video',yt:'_iERUuGoku8',hook:"What's actually inside a turbo.",body:"A real turbocharger taken apart, showing how exhaust flow spins the turbine that pressurises the intake air."},
+ {id:'vi2',s:'cars',t:'video',yt:'DqWKNuTppmU',hook:"How a turbo works, animated.",body:"A clear animation of the turbine, compressor and the path air takes into the engine."},
+ {id:'vi3',s:'investing',t:'video',yt:'jTW777ENc3c',hook:"Compound interest in one minute.",body:"Why reinvesting your returns makes such a big difference over time."},
+ {id:'vi4',s:'investing',t:'video',yt:'wf91rEGw88Q',credit:'Investopedia',hook:"Why compound interest gets called a wonder of the world.",body:"The difference between simple and compound interest, explained."},
+ {id:'vi5',s:'crypto',t:'video',yt:'s4g1XFU8Gto',credit:'The Guardian',hook:"Bitcoin explained in about three minutes.",body:"What Bitcoin actually is, and where the idea came from."},
+ {id:'vi6',s:'space',t:'video',yt:'e-P5IFTqB98',credit:'Kurzgesagt',hook:"Black holes, from birth to death.",body:"How black holes form, what an event horizon is, and how they eventually evaporate."},
+ {id:'vi7',s:'history',t:'video',yt:'MJkrcgrjkZo',short:true,credit:'HistoryExtra',hook:"So where did the horned Viking helmet come from?",body:"The answer involves a trip to the opera."},
+ {id:'vi8',s:'history',t:'video',yt:'gTLbLeow2nQ',credit:'Vox',hook:"Vikings never wore horned helmets. Here's why we think they did.",body:"The famous look traces back to a 19th-century opera costume."},
+ {id:'vi9',s:'psychology',t:'video',yt:'97f7MFEvGO4',credit:'Daniel Kahneman',hook:"The man who discovered loss aversion, explaining it himself.",body:"Do we struggle with uncertainty, or do we just hate losing? The Nobel prize winner answers."}
 ];
